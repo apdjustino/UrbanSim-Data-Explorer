@@ -1,0 +1,49 @@
+<template name="main">
+
+    <head lang="en">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="Justin Lewis" >
+        <title>Nursing Homes & Assisted Living Facilities</title>
+
+        <!-- Core CSS -->
+        <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+        <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+        <link href="stylesheets/typeahead.js-bootstrap.css" rel="stylesheet" type="text/css"> <!--https://github.com/jharding/typeahead.js-bootstrap.css-->
+        <link href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" rel="stylesheet" type="text/css">
+        <link href="stylesheets/map-template.css" rel="stylesheet" type="text/css"/>
+
+        <!--[if lte IE 8]>
+    <link href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css" rel="stylesheet" type="text/css">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome-ie7.min.css" rel="stylesheet">
+
+    <![endif]-->
+        <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.2.0/respond.js"></script>
+    <![endif]-->
+
+        <title></title>
+
+    </head>
+    <body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-header">
+            <div class="navbar-brand" id="logo"><img src="images/drcoglogowhite.png"/></div>
+            <div class="navbar-brand">UrbanSim Results</div>
+            {{#if currentUser}}
+                <div class="navbar-brand"><a href="#" class="logout">Log Out</a></div>
+            {{/if}}
+        </div>
+    </div>
+
+
+    <div class="row" id="container">
+        {{>yield}}
+    </div>
+
+
+
+    </body>
+</template>

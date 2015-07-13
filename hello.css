@@ -1,0 +1,17 @@
+/* CSS declarations go here */
+.loginContainer{
+    position:relative;
+    display: block;
+    width:25%;
+    margin:auto;
+
+}
+
+#mapCanvas{
+    position:relative;
+    height: 900px;
+}
+
+.test{
+    fill:black;
+}

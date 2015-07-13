@@ -1,0 +1,239 @@
+/****************************
+*****************************
+These stiles are for the title page
+*****************************
+*****************************/
+
+
+#title-img{
+    position:fixed;
+    top:240px;
+
+}
+
+h1.title-title{
+    font-size:50px;
+}
+
+
+
+/****************************
+*****************************
+These stiles are for the master page section
+*****************************
+*****************************/
+body{
+    background: radial-gradient(rgb(255,252,215), rgb(195,169,119));
+    position:relative;
+    height:768px;
+    width:100%;
+    overflow:hidden;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+img.titleHeader{
+    position:fixed;
+    top:3.4%;
+}
+
+img.logo{
+    position:fixed;
+    top:85%;
+    left:-3%;
+    width:247px;
+    height: 130px;
+}
+img.titleImage{
+    position:relative;
+    top:46.8%;
+}
+
+
+a.chevron{
+    font-size: 300%;
+    position:fixed;
+    top:90%;
+    left:95%;
+    color: black;
+    text-decoration: none;
+}
+a.chevron:visited{
+    color:black;
+
+}
+
+a.chevron:hover{
+    text-decoration:none;
+}
+
+div.title-container{
+    position:fixed;
+    top:3.4%;
+    height:190px;
+    width:1206px;
+}
+#slide-title{
+    color:rgb(127,74,37);
+    position:fixed;
+    top:8%;
+    left:2%;
+    font-size: 300%;
+    vertical-align:middle;
+
+
+}
+
+div.view{
+    position:fixed;
+    top:175px;
+    width:100%;
+    height:70%;
+}
+
+.view.ng-enter{
+    -webkit-animation: fadeIn 1.5s both ease-in;
+    z-index:8888;
+}
+
+/****************************
+*****************************
+These stiles are for the title slide
+*****************************
+*****************************/
+
+div.image-container{
+
+    width:45%;
+    top:5px;
+}
+
+ul.title-ul li{
+    margin-bottom:10px;
+    font-size:200%
+}
+
+div.list-container{
+    display:block;
+    margin:auto;
+    width:95%;
+}
+
+
+/****************************
+*****************************
+These stiles are for the organizational roles slide
+*****************************
+*****************************/
+
+ul.org-list{
+    left:20px;
+    position:relative;
+}
+
+ul.org-list li{
+    font-size:30px;
+}
+
+ul.org-sublist li{
+    font-size: 20px;
+}
+
+.rpo{
+    top:240px;
+    opacity:0;
+}
+
+
+/****************************
+*****************************
+These stiles are for the ACS slide
+*****************************
+*****************************/
+
+div.acs-container{
+    position:relative;
+    display:block;
+    margin:auto;
+    width:100%;
+}
+
+
+/****************************
+*****************************
+These stiles are for the ACS slide
+*****************************
+*****************************/
+
+
+#mapCanvas{
+    position:relative;
+    height: 100%;
+    width:100%;
+
+}
+
+
+/****************************
+*****************************
+These stiles are for the map slide
+*****************************
+*****************************/
+
+path.empty{
+    fill:none;
+}
+
+path.zones:hover{
+    stroke:black;
+    stroke-width: 1;
+}
+
+#map-controls{
+    position:fixed;
+    top:90%;
+    z-index:9999;
+    width:85%;
+}
+
+.q0-5 {fill:#eff3ff; opacity:.5;}
+/*.q1-7 {fill:#c6dbef; opacity:.5;}*/
+/*.q2-7 {fill:#9ecae1; opacity:.5;}*/
+.q1-5 {fill:#6baed6; opacity:.5;}
+.q2-5 {fill:#4292c6; opacity:.5;}
+.q3-5 {fill:#2171b5; opacity:.5;}
+.q4-5 {fill:#084594; opacity:.5;}
+
+
+
+circle{
+    fill:#E95D22;
+}
+
+
+.check{
+    position:relative;
+    width:25%;
+}
+
+.layerControls{
+    position:fixed;
+    top:20px;
+    left:90%;
+    z-index:9999;
+}
+
+label{
+    margin-top:10px;
+}
+
+.routes{
+    stroke:#A22E3B;
+    stroke-width:1;
+    fill:none;
+
+}
+
+.stops{
+    fill:#D99937;
+
+}
