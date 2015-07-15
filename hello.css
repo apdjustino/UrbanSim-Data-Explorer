@@ -12,6 +12,10 @@
     height: 900px;
 }
 
-.test{
-    fill:black;
+#resultTable{
+    display:none;
+}
+
+#downloadLink{
+    display:none;
 }

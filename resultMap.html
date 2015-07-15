@@ -45,27 +45,9 @@
                     </div>
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion_" href="#basemap-layers">Overlay Layers</a>
+                            <a id="downloadLink" href="data:text/csv;charset=UTF-8,{{link}}" download="download.csv">Download</a>
                         </div>
-                        <div id="basemap-layers" class="panel-collapse collapse in">
-                            <div class="panel-body" style="padding: 0px 15px;">
-                                <div class="radio">
-                                    <label>
-                                        <input class="" type="checkbox" ng-model="checked"/>Churches
-                                    </label>
-                                </div>
-                                <div class="radio">
-                                    <label>
-                                        <input class="" type="checkbox" ng-model="routeChecked"/>Transit Routes
-                                    </label>
-                                </div>
-                                <div class="radio">
-                                    <label>
-                                        <input class="" type="checkbox" ng-model="stopsChecked"/>Transit Stops
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -78,21 +60,14 @@
 
                         <div id="legend" class="panel-collapse collapse in">
                             <div class="panel-body" style="padding: 15px 15px;">
-                                <p>
-                                    <img src="http://gis.drcog.org/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=DRCOGPUB:nursing_homes" alt="Nursing Home" class="nhImage"/>  Nursing Home
-                                </p>
-                                <p>
-                                    <img src="http://gis.drcog.org/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=DRCOGPUB:assisted_living_facilities" alt="Assisted Living Facility" class="alrImage"/>  Assisted Living Facility
-                                </p>
-                                <p>
-                                    <img src="http://gis.drcog.org/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=DRCOGPUB:aaa_living_communities" alt="Living Communities" class="alrImage"/>  Living Communities
-                                </p>
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        {{>resultTable}}
     </div>
     <div class="col-sm-9 col-lg-9">
         {{>mapTemplate}}
@@ -101,6 +76,7 @@
 </template>
 <template name="mapTemplate">
     <div id="mapCanvas"></div>
+
 </template>
 
 

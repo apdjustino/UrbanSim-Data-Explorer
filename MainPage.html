@@ -30,3 +30,29 @@
 <template name="yearOption">
     <option value="{{sim_year}}">{{sim_year}}</option>
 </template>
+
+<template name="resultTable">
+    <div id="resultTable">
+        <table class="table table-striped">
+            <caption>Zone Data</caption>
+            <thead>
+            <tr>
+                <th>Zone Id</th>
+                <th id="fieldHeader"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td id="zoneIdData"></td>
+                <td id="dataPoint"></td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="form-group">
+            <label for="comment">Comment:</label>
+            <textarea class="form-control" rows="5" id="comment"></textarea>
+            <button class="btn btn-default" id="addComment">Add Comment</button>
+        </div>
+
+    </div>
+</template>

@@ -5,8 +5,8 @@
 # but you can also edit it by hand.
 
 meteor-platform
-insecure
 mrt:leaflet
 accounts-ui
 accounts-password
 iron:router
+harrison:papa-parse

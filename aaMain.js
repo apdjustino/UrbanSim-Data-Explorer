@@ -1,5 +1,6 @@
 zones = new Mongo.Collection("zones");
 fields = new Mongo.Collection("fields");
+comments = new Mongo.Collection("comments");
 Router.configure({
     layoutTemplate: 'main'
 });
@@ -70,17 +71,37 @@ if(Meteor.isClient) {
     //variable to check if there is an existing subscription
     var yearHandler = false;
     Template.results.events({
-        'click #queryButton': function(event, template){
+        'click #queryButton': function (event, template) {
             var selectedYear = parseInt(template.find('#yearSelect').value);
             var selectedField = template.find("#fieldSelect").value;
 
             var parameters = [selectedField, selectedYear];
 
             var newYearHandler = Meteor.subscribe("zones", parameters);
-            if(yearHandler){
+            if (yearHandler) {
                 yearHandler.stop();
             }
             yearHandler = newYearHandler;
+            $('#resultTable').css("display", "none");
+            $('#downloadLink').css("display", "inline");
+        }
+
+
+
+    });
+
+    Template.resultTable.events({
+        'click #addComment': function(event, target){
+            var field = $('#fieldSelect option:selected').text();
+            var zone = $('#zoneIdData').text();
+            var text = $('#comment').val();
+            var year = $('#yearSelect option:selected').text();
+
+            Meteor.call("addComment", zone, field, year, text);
+            $('#comment').val('');
+            alert('Comment has been added to the database.');
+
+
         }
     });
 
@@ -92,17 +113,17 @@ if(Meteor.isClient) {
         year: function(){
             var years = [];
             for(var i=2011; i<2041; i++){
-                var year = {sim_year: i}
+                var year = {sim_year: i};
                 years.push(year);
             }
             return years;
         },
-        result: function(){
-            zones.find({}).forEach(function(doc){
-               console.log(doc);
-            });
-            return zones.find({});
+        link: function(){
+            var data = zones.find({}).fetch();
+            data = Papa.unparse(data);
+            return encodeURIComponent(data);
         }
+
 
 
     });
@@ -116,7 +137,7 @@ if (Meteor.isServer){
     Meteor.publish("zones", function(parameters){
         var fieldObj = {};
         var test = [];
-        fieldObj["zone_id"] = 1
+        fieldObj["zone_id"] = 1;
         fieldObj[parameters[0]] = 1;
         //zones.find({sim_year: parameters[1]}, fieldObj).forEach(function(doc){
         //    test.push(doc);
@@ -126,6 +147,8 @@ if (Meteor.isServer){
     })
 
 }
+
+
 
 
 

@@ -108,6 +108,21 @@ if(Meteor.isClient){
                     return color(mapById.get(d.properties.ZONE_ID).val);
                 });
 
+                feature.on("click", function(d){
+                    d3.select("#resultTable")
+                        .style("display", "block");
+
+                    d3.select('#fieldHeader').text($('#fieldSelect option:selected').text());
+
+
+                    d3.select('#zoneIdData').text(d.properties.ZONE_ID);
+
+                    d3.select('#dataPoint').text(mapById.get(d.properties.ZONE_ID).val);
+
+
+
+                });
+
                 d3.selectAll('.pathTitle')
                     .text(function (d){
                         return "Zone ID: " + d.properties.ZONE_ID + "\n" +
