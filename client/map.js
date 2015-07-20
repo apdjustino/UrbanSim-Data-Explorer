@@ -7,7 +7,7 @@ if(Meteor.isClient){
         L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
         //initiate d3 variables
-
+        var centered;
         var mapById = d3.map();
         var svg = d3.select(map.getPanes().overlayPane).append("svg");
         var g = svg.append("g").attr("class", "leaflet-zoom-hide");
@@ -20,15 +20,23 @@ if(Meteor.isClient){
 
         //d3 "loop" that adds topojson to map
         d3.json("data/zonesGeo.json", function(zones){
-            console.log(zones);
+            //console.log(zones);
             var shape = topojson.feature(zones, zones.objects.zones);
             var transform = d3.geo.transform({point: projectPoint});
+            var inverseTransform = d3.geo.transform({point: inverseProjectPoint});
             var path = d3.geo.path().projection(transform);
 
-            feature = g.selectAll("path").data(shape.features).enter().append("path").attr("class", "q0-7 zones");
+
+            feature = g.selectAll("path")
+                .data(shape.features)
+                .enter()
+                .append("path")
+                .attr("class", "q0-7 zones");
             var title = feature.append("svg:title")
                 .attr("class", "pathTitle")
                 .text(function(d){return "ZoneID: " + d.properties.ZONE_ID;});
+
+
 
             //var feature = g.selectAll("path")
             //    .data(shape.features)
@@ -44,6 +52,9 @@ if(Meteor.isClient){
                 topLeft = bounds[0],
                 bottomRight = bounds[1];
 
+                width = bottomRight[0] - topLeft[0];
+                height = bottomRight[1] - topLeft[1];
+
                 svg
                     .attr("width", bottomRight[0] - topLeft[0])
                     .attr("height", bottomRight[1] - topLeft[1])
@@ -56,11 +67,18 @@ if(Meteor.isClient){
                 feature.attr("d", path);
 
 
+
+
             }
 
             function projectPoint(x, y){
                 var point = map.latLngToLayerPoint(new L.LatLng(y,x));
                 this.stream.point(point.x, point.y);
+            }
+
+            function inverseProjectPoint(x, y){
+                var point = map.layerPointToLatLng([y,x]);
+                return point;
             }
 
 
@@ -115,6 +133,7 @@ if(Meteor.isClient){
                     d3.select('#fieldHeader').text($('#fieldSelect option:selected').text());
 
 
+
                     d3.select('#zoneIdData').text(d.properties.ZONE_ID);
 
                     d3.select('#dataPoint').text(mapById.get(d.properties.ZONE_ID).val);
@@ -128,6 +147,10 @@ if(Meteor.isClient){
                         return "Zone ID: " + d.properties.ZONE_ID + "\n" +
                             field + ": " + mapById.get(d.properties.ZONE_ID).val
                     });
+
+
+
+
 
             }
 

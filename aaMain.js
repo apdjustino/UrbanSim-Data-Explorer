@@ -72,12 +72,16 @@ if(Meteor.isClient) {
     var yearHandler = false;
     Template.results.events({
         'click #queryButton': function (event, template) {
-            var selectedYear = parseInt(template.find('#yearSelect').value);
-            var selectedField = template.find("#fieldSelect").value;
+            //var selectedYear = parseInt(template.find('#yearSelect').value);
+            //var selectedField = template.find("#fieldSelect").value;
 
-            var parameters = [selectedField, selectedYear];
+            var selectedYear = parseInt($('#yearSelect').val());
+            var selectedField = $('#fieldSelect').val();
 
-            var newYearHandler = Meteor.subscribe("zones", parameters);
+            //var parameters = [selectedField, selectedYear];
+            var newYearHandler = Meteor.subscribe("zones", selectedField, selectedYear);
+
+            //var newYearHandler = Meteor.subscribe("zones", parameters);
             if (yearHandler) {
                 yearHandler.stop();
             }
@@ -129,25 +133,32 @@ if(Meteor.isClient) {
     });
 
 }
+
 if (Meteor.isServer){
     Meteor.publish("fields", function(){
         return fields.find({});
     });
 
-    Meteor.publish("zones", function(parameters){
-        var fieldObj = {};
-        var test = [];
-        fieldObj["zone_id"] = 1;
-        fieldObj[parameters[0]] = 1;
-        //zones.find({sim_year: parameters[1]}, fieldObj).forEach(function(doc){
-        //    test.push(doc);
-        //});
-
-        return zones.find({sim_year: {$eq: parameters[1]}}, {fields: fieldObj});
-    })
+    Meteor.publish("zones", function(selectedField, selectedYear){
+        var dict = {};
+        var newField = selectedField;
+        dict["zone_id"] = 1;
+        dict[newField] = 1;
+        return zones.find({sim_year:selectedYear}, {fields:dict});
+    });
+    //Meteor.publish("zones", function(parameters){
+    //    var fieldObj = {};
+    //    var test = [];
+    //    fieldObj["zone_id"] = 1;
+    //    fieldObj[parameters[0]] = 1;
+    //    //zones.find({sim_year: parameters[1]}, fieldObj).forEach(function(doc){
+    //    //    test.push(doc);
+    //    //});
+    //
+    //    return zones.find({sim_year: {$eq: parameters[1]}}, {fields: fieldObj});
+    //});
 
 }
-
 
 
 
