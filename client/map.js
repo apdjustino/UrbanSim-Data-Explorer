@@ -153,16 +153,26 @@ if(Meteor.isClient){
 
 
             }
-
         }
 
+        d3.select("#zoneFind").on("submit", function(){
+            d3.event.preventDefault();
+            console.log(this.zone.value);
+            var dataPath = d3.selectAll("path");
+            dataPath.each(findZone);
+        });
 
+        function findZone(d){
+            //console.log($('#zoneFind')[0].lastElementChild.value);
+            if(d.properties.zone_str == $('#zoneFind')[0].lastElementChild.value){
+                console.log(d.geometry.coordinates[0][0]);
+                map.setView(new L.LatLng(d.geometry.coordinates[0][0][1], d.geometry.coordinates[0][0][0]), 13, {animate:true});
+                d3.select(this).attr("class", "foundZone q0-7 zones");
+            }
+            else{
+                d3.select(this).attr("class", "q0-7 zones");
+            }
 
-
-
-
-
-
-
+        }
     }
 }

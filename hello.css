@@ -19,3 +19,8 @@
 #downloadLink{
     display:none;
 }
+
+.foundZone{
+    stroke:black;
+    stroke-width: 1.5;
+}

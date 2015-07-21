@@ -1,6 +1,7 @@
 zones = new Mongo.Collection("zones");
 fields = new Mongo.Collection("fields");
 comments = new Mongo.Collection("comments");
+zone_map = true;
 Router.configure({
     layoutTemplate: 'main'
 });
@@ -90,8 +91,6 @@ if(Meteor.isClient) {
             $('#downloadLink').css("display", "inline");
         }
 
-
-
     });
 
     Template.resultTable.events({
@@ -131,6 +130,8 @@ if(Meteor.isClient) {
 
 
     });
+
+
 
 }
 
