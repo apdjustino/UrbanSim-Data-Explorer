@@ -2,6 +2,8 @@ zones = new Mongo.Collection("zones");
 fields = new Mongo.Collection("fields");
 comments = new Mongo.Collection("comments");
 zone_map = true;
+
+//routing code
 Router.configure({
     layoutTemplate: 'main'
 });
@@ -24,10 +26,35 @@ Router.map(function(){
     });
 });
 
+Router.map(function(){
+   this.route('admin', {
+       path: '/admin',
+       onBeforeAction: function(){
+           if(!Meteor.user()){
+               this.render('login')
+           }else{
+               var user = Meteor.user();
+               if(Roles.userIsInRole(user, ['admin'])){
+                   this.next();
+               }
+               else{
+                   alert('Not authorized to access this page');
+                   this.render('results');
+                   throw new Meteor.Error(403, "Not authorized to access this page");
+
+               }
+
+           }
+       }
+   });
+});
+
+
+//client side code
 if(Meteor.isClient) {
 
 
-
+    Session.set('addNewUser', true);
     Meteor.subscribe("fields");
     //events section
     Template.register.events({
@@ -35,10 +62,12 @@ if(Meteor.isClient) {
             event.preventDefault();
             var email= $('[name=email]').val();
             var password = $('[name=password]').val();
-            Accounts.createUser({
+
+            id = Accounts.createUser({
                 email: email,
                 password: password
             });
+
             Router.go('home');
         }
     });
@@ -66,6 +95,10 @@ if(Meteor.isClient) {
             event.preventDefault();
             Meteor.logout();
             Router.go('home');
+        },
+        'click #adminLink': function(event){
+            event.preventDefault();
+            Router.go('admin');
         }
     });
 
@@ -108,8 +141,76 @@ if(Meteor.isClient) {
         }
     });
 
+    Template.admin.events({
+        'click #changePassword': function(event, template){
+            Session.set('changePassword', true);
+            Session.set('addNewUser', false);
+            Session.set('editRole', false);
+            Session.set('deleteUser', false);
+            $('li').removeClass("active");
+            $(event.currentTarget).addClass('active');
+
+        },
+        'click #addNewUser': function(event){
+            Session.set('addNewUser', true);
+            Session.set('changePassword', false);
+            Session.set('editRole', false);
+            Session.set('deleteUser', false);
+            $('li').removeClass("active");
+            $(event.currentTarget).addClass('active');
+        },
+        'click #editRole': function(event){
+            Session.set('editRole', true);
+            Session.set('addNewUser', false);
+            Session.set('changePassword', false);
+            Session.set('deleteUser', false);
+            $('li').removeClass("active");
+            $(event.currentTarget).addClass('active');
+        },
+        'click #deleteUser': function(event){
+            Session.set('editRole', false);
+            Session.set('addNewUser', false);
+            Session.set('changePassword', false);
+            Session.set('deleteUser', true);
+            $('li').removeClass("active");
+            $(event.currentTarget).addClass('active');
+        }
+
+    });
+
+    Template.addNewUserTemplate.events({
+       'click #btnAddUser': function(event, template){
+           event.preventDefault();
+           var email = template.firstNode.lastElementChild[0].value;
+           var pass1 = template.firstNode.lastElementChild[1].value;
+           var pass2 = template.firstNode.lastElementChild[2].value;
+           var role = template.firstNode.lastElementChild[3].value;
+
+           if(pass1 === pass2){
+               Meteor.call("addNewUser", email, pass1, role)
+               template.firstNode.lastElementChild[0].value = "";
+               template.firstNode.lastElementChild[1].value = "";
+               template.firstNode.lastElementChild[2].value = "";
+               template.firstNode.lastElementChild[3].value = "";
+               alert('New user added to database');
+           }
+           else{
+               alert("Passwords do not match");
+           }
+
+
+       }
+    });
+
 
     //helpers section
+
+    Template.adminMenu.helpers({
+        changePassword: function(){return Session.get('changePassword');},
+        addNewUser: function(){return Session.get('addNewUser');},
+        editRole: function(){return Session.get('editRole');},
+        deleteUser: function(){return Session.get('deleteUser');}
+    });
 
     Template.results.helpers({
         field: function(){return fields.find({});},
@@ -131,13 +232,36 @@ if(Meteor.isClient) {
 
     });
 
+    Template.main.helpers({
+        adminuser: function(){
+            var user = Meteor.user();
+            var isAdmin = Meteor.call("checkAdmin", user);
+            return isAdmin;
+        }
+    });
+
 
 
 }
 
+//server code for publishing
 if (Meteor.isServer){
     Meteor.publish("fields", function(){
-        return fields.find({});
+
+        if(Roles.userIsInRole(this.userId, ['admin'])){
+            return fields.find({});
+        }
+        else if(Roles.userIsInRole(this.userId, ['drcog'])){
+            var fieldList = ['pop_base', 'hh_base', 'emp_base','emp1_base','emp2_base','emp3_base','emp4_base','emp5_base','emp6_base','pop_sim','hh_sim','emp_sim','emp1_sim','emp2_sim','emp3_sim','emp4_sim','emp5_sim','emp6_sim','pop_diff','hh_diff','emp_diff','emp1_diff','emp2_diff','emp3_diff','emp4_diff','emp5_diff','emp6_diff'];
+            return fields.find({field:{$in:fieldList}});
+        }
+        else{
+            return fields.find({});
+        }
+
+
+
+
     });
 
     Meteor.publish("zones", function(selectedField, selectedYear){
@@ -147,17 +271,6 @@ if (Meteor.isServer){
         dict[newField] = 1;
         return zones.find({sim_year:selectedYear}, {fields:dict});
     });
-    //Meteor.publish("zones", function(parameters){
-    //    var fieldObj = {};
-    //    var test = [];
-    //    fieldObj["zone_id"] = 1;
-    //    fieldObj[parameters[0]] = 1;
-    //    //zones.find({sim_year: parameters[1]}, fieldObj).forEach(function(doc){
-    //    //    test.push(doc);
-    //    //});
-    //
-    //    return zones.find({sim_year: {$eq: parameters[1]}}, {fields: fieldObj});
-    //});
 
 }
 

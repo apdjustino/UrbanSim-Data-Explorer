@@ -16,6 +16,19 @@ Meteor.methods({
             year: year,
             text: text
         });
+    },
+    addNewUser: function(email, pass, role){
+        id = Accounts.createUser({
+            email: email,
+            password: pass
+        });
+        Roles.addUsersToRoles(id, role)
+    },
+    checkAdmin: function(){
+        var user = Meteor.user();
+        var isAdmin = Roles.userIsInRole(user, ['admin']);
+        console.log(isAdmin);
+        return isAdmin;
     }
 });
 

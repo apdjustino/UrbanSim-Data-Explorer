@@ -24,3 +24,17 @@
     stroke:black;
     stroke-width: 1.5;
 }
+
+.nav-buttons{
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.adminContainer{
+    position:relative;
+    display: block;
+    width:50%;
+    margin:auto;
+
+}

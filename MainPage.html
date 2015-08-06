@@ -4,6 +4,7 @@
         <form class="register">
             <p>Email: <input type="email" name="email"/></p>
             <p>Password: <input type="password" name="password"/></p>
+
             <p><input type="submit" value="Register"/></p>
         </form>
     </div>
@@ -55,5 +56,81 @@
             <button class="btn btn-default" id="addComment">Add Comment</button>
         </div>
 
+    </div>
+</template>
+
+<template name="admin">
+    <div class="row">
+        <div class="col-lg-2">
+            <ul class="nav nav-pills nav-stacked">
+                <li class="active" id="addNewUser"><a href="#">Add New User Account</a></li>
+                <li id="editRole"><a href="#">Edit Existing User Roles</a></li>
+                <li id="changePassword"><a href="#">Change User Password</a></li>
+                <li id="deleteUser"><a href="#">Delete User Account</a></li>
+            </ul>
+        </div>
+        <div class="col-lg-10">
+            {{>adminMenu}}
+        </div>
+    </div>
+</template>
+
+<template name="adminMenu">
+
+    {{#if addNewUser}}
+       {{>addNewUserTemplate}}
+    {{else}}{{#if editRole}}
+        {{>editRoleTemplate}}
+    {{else}}{{#if changePassword}}
+        {{>changePasswordTemplate}}
+    {{else}}{{#if deleteUser}}
+        {{>deleteUserTemplate}}
+    {{/if}}{{/if}}{{/if}}{{/if}}
+
+</template>
+
+<template name="addNewUserTemplate">
+    <div class="adminContainer">
+        <h2>Add New User Account</h2>
+        <form id="newUserForm" role="form">
+            <div class="form-group">
+                <label for="newUserEmail">E-mail address: </label>
+                <input type="email" class="form-control" id="newUserEmail"/>
+            </div>
+            <div class="form-group">
+                <label for="newUserPass1">Password: </label>
+                <input type="password" class="form-control" id="newUserPass1"/>
+            </div>
+            <div class="form-group">
+                <label for="newUserPass2">Confirm Password: </label>
+                <input type="password" class="form-control" id="newUserPass2"/>
+            </div>
+            <div class="form-group">
+                <label for="userRole">Role: </label>
+                <input type="text" class="form-control" id="userRole"/>
+            </div>
+            <button type="submit" class="btn btn-default" id="btnAddUser">Add User</button>
+
+        </form>
+    </div>
+</template>
+
+
+
+<template name="editRoleTemplate">
+    <div class="adminContainer">
+        <h2>Edit Roles Placeholder</h2>
+    </div>
+</template>
+
+<template name="changePasswordTemplate">
+    <div class="adminContainer">
+        <h2>Change Password Placeholder</h2>
+    </div>
+</template>
+
+<template name="deleteUserTemplate">
+    <div class="adminContainer">
+        <h2>Delete User Account Placeholder</h2>
     </div>
 </template>
