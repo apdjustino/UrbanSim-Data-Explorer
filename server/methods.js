@@ -48,6 +48,13 @@ Meteor.methods({
     },
     deleteUser: function(email){
         users.remove({emails:{$elemMatch:{address:email}}});
+    },
+    sendEmail: function(email, role){
+        var accountId = Accounts.createUser({
+            'email': email
+        });
+        Roles.addUsersToRoles(accountId, role);
+        Accounts.sendEnrollmentEmail(accountId);
     }
 });
 

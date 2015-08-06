@@ -54,7 +54,7 @@ Router.map(function(){
 //client side code
 if(Meteor.isClient) {
 
-
+    Accounts.config({forbidClientAccountCreation:true});
     Session.set('addNewUser', true);
     Meteor.subscribe("fields");
     Meteor.subscribe("userData");
@@ -203,7 +203,14 @@ if(Meteor.isClient) {
            }
 
 
-       }
+       },
+        'click #btnAddUserWithoutPass': function(event){
+            event.preventDefault();
+            var email = $('#newUserEmail').val();
+            var role = $('#userRole').val()
+            Meteor.call("sendEmail", email, role);
+        }
+
     });
 
     Template.editRoleTemplate.events({
@@ -382,13 +389,6 @@ if (Meteor.isServer){
     });
 
 }
-
-
-
-
-
-
-
 
 /**
  * Created by jmartinez on 7/9/2015.
