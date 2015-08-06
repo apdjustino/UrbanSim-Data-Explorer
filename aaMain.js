@@ -1,6 +1,7 @@
 zones = new Mongo.Collection("zones");
 fields = new Mongo.Collection("fields");
 comments = new Mongo.Collection("comments");
+users = Meteor.users;
 zone_map = true;
 
 //routing code
@@ -56,6 +57,9 @@ if(Meteor.isClient) {
 
     Session.set('addNewUser', true);
     Meteor.subscribe("fields");
+    Meteor.subscribe("userData");
+
+
     //events section
     Template.register.events({
         'submit form': function(event){
@@ -202,6 +206,70 @@ if(Meteor.isClient) {
        }
     });
 
+    Template.editRoleTemplate.events({
+        'click #btnDeleteRole': function(event){
+            event.preventDefault();
+            var role = $('#roleList option:selected').text();
+            var email = $('#userDropDownSelect option:selected').text();
+            Meteor.call("deleteRole", email, role);
+            Meteor.call("getRoles", email, function(error,result){
+                Session.set('selectedUserRoles', result);
+            });
+
+        },
+        'change #userDropDownSelect': function(event){
+            var email = event.currentTarget.value;
+            Meteor.call("getRoles", email, function(error,result){
+                Session.set('selectedUserRoles', result);
+            });
+        },
+        'click #addNewRole': function(event, template){
+            event.preventDefault();
+            var role = $('#newRole').val();
+            var email = $('#userDropDownSelect option:selected').text();
+            Meteor.call("addRole", email, role);
+            Meteor.call("getRoles", email, function(error,result){
+                Session.set('selectedUserRoles', result);
+            });
+            $('#newRole').val("")
+        }
+    });
+
+    Template.changePasswordTemplate.events({
+       "click #btnChangePass": function(event){
+           event.preventDefault();
+           var email = $('#userDropDownSelectPass option:selected').text();
+           var old_password = $('#newPassword1').val();
+           var new_password = $('#newPassword2').val();
+           if(old_password.length > 0){
+               if(old_password === new_password){
+                   Meteor.call("newPass", email, new_password);
+                   alert('Password has been changed.');
+                   $('#newPassword1').val("");
+                   $('#newPassword1').val("");
+               }
+               else{
+                   alert('Passwords do not match.')
+               }
+           }
+           else{
+               alert('Password must be at least 1 character long.')
+           }
+
+       }
+    });
+
+    Template.deleteUserTemplate.events({
+       "click #btnDelete": function(event){
+           event.preventDefault();
+           var email = $('#userDropDownSelectDelete option:selected').text();
+           Meteor.call("deleteUser", email);
+           alert('User removed from database.')
+       }
+    });
+
+
+
 
     //helpers section
 
@@ -232,13 +300,49 @@ if(Meteor.isClient) {
 
     });
 
-    Template.main.helpers({
-        adminuser: function(){
-            var user = Meteor.user();
-            var isAdmin = Meteor.call("checkAdmin", user);
-            return isAdmin;
+
+    Template.editRoleTemplate.helpers({
+        userEmail: function(){
+            var data = users.find({}).fetch();
+            var emails = [];
+
+            data.forEach(function(cv, index, arr){
+                var email_dict = {email:cv.emails[0].address};
+                emails.push(email_dict);
+            });
+
+            return emails;
+        },
+        userRoles: function(){return Session.get('selectedUserRoles');}
+    });
+
+    Template.changePasswordTemplate.helpers({
+        userEmail: function() {
+            var data = users.find({}).fetch();
+            var emails = [];
+
+            data.forEach(function (cv, index, arr) {
+                var email_dict = {email: cv.emails[0].address};
+                emails.push(email_dict);
+            });
+
+            return emails;
         }
     });
+
+    Template.deleteUserTemplate.helpers({
+        userEmail: function() {
+            var data = users.find({}).fetch();
+            var emails = [];
+
+            data.forEach(function (cv, index, arr) {
+                var email_dict = {email: cv.emails[0].address};
+                emails.push(email_dict);
+            });
+
+            return emails;
+        }
+    })
 
 
 
@@ -270,6 +374,11 @@ if (Meteor.isServer){
         dict["zone_id"] = 1;
         dict[newField] = 1;
         return zones.find({sim_year:selectedYear}, {fields:dict});
+    });
+
+    Meteor.publish("userData", function(){
+        //var selectedFields = {emails: 1, roles:1, services:1};
+        return users.find({});
     });
 
 }

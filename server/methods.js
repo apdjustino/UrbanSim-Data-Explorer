@@ -24,11 +24,30 @@ Meteor.methods({
         });
         Roles.addUsersToRoles(id, role)
     },
-    checkAdmin: function(){
-        var user = Meteor.user();
-        var isAdmin = Roles.userIsInRole(user, ['admin']);
-        console.log(isAdmin);
-        return isAdmin;
+    getRoles: function(email){
+        var user = users.find({emails:{$elemMatch:{address:email}}}).fetch();
+        var roles =  Roles.getRolesForUser(user[0]);
+        var output = [];
+        roles.forEach(function(cv, index, arr){
+            var dict = {roleName: cv};
+            output.push(dict);
+        });
+        return output;
+    },
+    deleteRole: function(email, role){
+        var user = users.find({emails:{$elemMatch:{address:email}}}).fetch();
+        Roles.removeUsersFromRoles(user[0], role);
+    },
+    addRole: function(email, role){
+        var user = users.find({emails:{$elemMatch:{address:email}}}).fetch();
+        Roles.addUsersToRoles(user[0], role);
+    },
+    newPass: function(email, newPass){
+        var user = users.find({emails:{$elemMatch:{address:email}}}).fetch();
+        Accounts.setPassword(user[0]._id, newPass);
+    },
+    deleteUser: function(email){
+        users.remove({emails:{$elemMatch:{address:email}}});
     }
 });
 

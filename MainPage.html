@@ -119,18 +119,77 @@
 
 <template name="editRoleTemplate">
     <div class="adminContainer">
-        <h2>Edit Roles Placeholder</h2>
+        <h2>Change User Roles</h2>
+        <form id="changeRoleForm" role="form">
+            <div class="form-group">
+                <label for="userDropDown">User Email: </label>
+                <select class="form-control" id="userDropDownSelect">
+                    <option value="" disabled selected>Select User E-mail Address</option>
+                    {{#each userEmail}}
+                        {{>selectOptionEmails}}
+                    {{/each}}
+                </select>
+                <label for="roleList">Current Roles</label>
+                <select multiple id="roleList" class="form-control">
+                    {{#each userRoles}}
+                        {{>selectOptionsRoles}}
+                    {{/each}}
+                </select>
+                <button class="btn btn-default" id="btnDeleteRole">Delete Role</button>
+            </div>
+            <div class="form-group">
+                <label for="newRole">New Role: </label>
+                <input type="text" id="newRole" class="form-control"/>
+                <button class="btn btn-default" id="addNewRole">Add New Role</button>
+            </div>
+        </form>
     </div>
 </template>
 
 <template name="changePasswordTemplate">
     <div class="adminContainer">
-        <h2>Change Password Placeholder</h2>
+        <h2>Change Password</h2>
+        <div class="form-group">
+            <label for="userDropDown">User Email: </label>
+            <select class="form-control" id="userDropDownSelectPass">
+                <option value="" disabled selected>Select User E-mail Address</option>
+                {{#each userEmail}}
+                    {{>selectOptionEmails}}
+                {{/each}}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="newUserPass1">New Password: </label>
+            <input type="password" class="form-control" id="newPassword1"/>
+        </div>
+        <div class="form-group">
+            <label for="newUserPass2">Confirm Password: </label>
+            <input type="password" class="form-control" id="newPassword2"/>
+        </div>
+        <button class="btn btn-default" id="btnChangePass">Change Password</button>
     </div>
 </template>
 
 <template name="deleteUserTemplate">
     <div class="adminContainer">
-        <h2>Delete User Account Placeholder</h2>
+        <h2>Delete User Account</h2>
+        <div class="form-group">
+            <label for="userDropDown">User Email: </label>
+            <select class="form-control" id="userDropDownSelectDelete">
+                <option value="" disabled selected>Select User E-mail Address</option>
+                {{#each userEmail}}
+                    {{>selectOptionEmails}}
+                {{/each}}
+            </select>
+        </div>
+        <button class="btn btn-default" id="btnDelete">Delete User</button>
     </div>
+</template>
+
+<template name="selectOptionEmails">
+    <option value="{{email}}">{{email}}</option>
+</template>
+
+<template name="selectOptionsRoles">
+    <option value="{{roleName}}">{{roleName}}</option>
 </template>
