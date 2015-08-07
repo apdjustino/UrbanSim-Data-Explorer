@@ -57,7 +57,10 @@ if(Meteor.isClient) {
     Accounts.config({forbidClientAccountCreation:true});
     Session.set('addNewUser', true);
     Meteor.subscribe("fields");
-    Meteor.subscribe("userData");
+    if(Meteor.user()){
+        Meteor.subscribe("userData");
+    }
+
 
 
     //events section
@@ -103,6 +106,10 @@ if(Meteor.isClient) {
         'click #adminLink': function(event){
             event.preventDefault();
             Router.go('admin');
+        },
+        'click #resultLink': function(event){
+            event.preventDefault();
+            Router.go('results');
         }
     });
 
@@ -126,6 +133,7 @@ if(Meteor.isClient) {
             yearHandler = newYearHandler;
             $('#resultTable').css("display", "none");
             $('#downloadLink').css("display", "inline");
+
         }
 
     });
@@ -378,14 +386,30 @@ if (Meteor.isServer){
     Meteor.publish("zones", function(selectedField, selectedYear){
         var dict = {};
         var newField = selectedField;
+        var user = users.findOne(this.userId);
+        var userRoles = user.roles;
         dict["zone_id"] = 1;
+        dict["county_name"] = 1;
         dict[newField] = 1;
-        return zones.find({sim_year:selectedYear}, {fields:dict});
+
+
+        if(userRoles[0] === "admin" || userRoles[0] === "drcog"){
+            return zones.find({sim_year:selectedYear}, {fields:dict});
+        }
+        else{
+            return zones.find({sim_year:selectedYear, county_name:{$in:userRoles}}, {fields:dict});
+        }
+
+
+
     });
 
     Meteor.publish("userData", function(){
         //var selectedFields = {emails: 1, roles:1, services:1};
-        return users.find({});
+        if(this.userId){
+            return users.find({});
+        }
+
     });
 
 }

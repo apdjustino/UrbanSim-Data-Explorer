@@ -33,8 +33,9 @@
             <div class="navbar-brand" id="logo"><img src="images/drcoglogowhite.png"/></div>
             <div class="navbar-brand">UrbanSim Results</div>
             {{#if currentUser}}
-
+                <div class="navbar-brand"><button class=" btn btn-default nav-buttons" id="resultLink">Result Map</button></div>
                 <div class="navbar-brand"><button class="btn btn-default logout nav-buttons">Log Out</button></div>
+
                 {{#if isInRole 'admin'}}
 
                     <div class="navbar-brand"><button class="btn btn-default nav-buttons" id="adminLink">Admin Page</button></div>

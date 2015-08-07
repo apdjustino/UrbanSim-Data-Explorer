@@ -92,8 +92,19 @@ if(Meteor.isClient){
         Tracker.autorun(function(){
             var data = zones.find({}).fetch();
             if(data.length == 2804){
-                //console.log(data);
+                console.log(data);
                 setMap(data);
+            }
+            else{
+                try{
+                    //console.log(data);
+                    setMap(data);
+                }
+                catch(err){
+                    //console.log(data);
+                    console.log(err);
+                }
+
             }
             //setMap(data);
 
@@ -113,7 +124,7 @@ if(Meteor.isClient){
                 });
                 valArr.push(cv[field]);
             });
-            console.log(valArr);
+            //console.log(valArr);
             var max = Math.max.apply(null, valArr);
             if(max){  //need this if statement because Meteor's reactive function autorun executes during mid-data subscribe
                 quantize.domain([0,max]);
@@ -123,7 +134,10 @@ if(Meteor.isClient){
                 //    return quantize(mapById.get(d.properties.ZONE_ID).val) + " zones";
                 //});
                 feature.style("fill", function(d){
-                    return color(mapById.get(d.properties.ZONE_ID).val);
+                    if(mapById.get(d.properties.ZONE_ID)){
+                        return color(mapById.get(d.properties.ZONE_ID).val);
+                    }
+
                 });
 
                 feature.on("click", function(d){
@@ -135,8 +149,15 @@ if(Meteor.isClient){
 
 
                     d3.select('#zoneIdData').text(d.properties.ZONE_ID);
+                    d3.select('#tazIDData').text(d.properties.TAZ_ID);
 
-                    d3.select('#dataPoint').text(mapById.get(d.properties.ZONE_ID).val);
+                    if(mapById.get(d.properties.ZONE_ID)){
+                        d3.select('#dataPoint').text(mapById.get(d.properties.ZONE_ID).val);
+                    }
+                    else{
+                        d3.select('#dataPoint').text("");
+                    }
+
 
 
 
@@ -162,16 +183,36 @@ if(Meteor.isClient){
             dataPath.each(findZone);
         });
 
+        /* This function matches the user control input with the data in the topojson file.
+           If the TAZ_ID or the ZONE_ID match the user control input, then the function will find the right
+           path element and zoom in on it, centering on one coordinate in the polyline.
+         */
+
         function findZone(d){
-            //console.log($('#zoneFind')[0].lastElementChild.value);
-            if(d.properties.zone_str == $('#zoneFind')[0].lastElementChild.value){
-                console.log(d.geometry.coordinates[0][0]);
-                map.setView(new L.LatLng(d.geometry.coordinates[0][0][1], d.geometry.coordinates[0][0][0]), 13, {animate:true});
-                d3.select(this).attr("class", "foundZone q0-7 zones");
+            if($('#zoneFind')[0].lastElementChild.value.length == 4){
+                if(d.properties.ZONE_ID == $('#zoneFind')[0].lastElementChild.value){
+                    //console.log(d.properties);
+                    map.setView(new L.LatLng(d.geometry.coordinates[0][0][1], d.geometry.coordinates[0][0][0]), 13, {animate:true});
+                    d3.select(this).attr("class", "foundZone q0-7 zones");
+                }
+                else{
+                    d3.select(this).attr("class", "q0-7 zones");
+                }
+            }
+            else if($('#zoneFind')[0].lastElementChild.value.length == 6){
+                if(d.properties.TAZ_ID == $('#zoneFind')[0].lastElementChild.value){
+                    //console.log(d.properties);
+                    map.setView(new L.LatLng(d.geometry.coordinates[0][0][1], d.geometry.coordinates[0][0][0]), 13, {animate:true});
+                    d3.select(this).attr("class", "foundZone q0-7 zones");
+                }
+                else{
+                    d3.select(this).attr("class", "q0-7 zones");
+                }
             }
             else{
                 d3.select(this).attr("class", "q0-7 zones");
             }
+
 
         }
     }
