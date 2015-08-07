@@ -57,9 +57,8 @@ if(Meteor.isClient) {
     Accounts.config({forbidClientAccountCreation:true});
     Session.set('addNewUser', true);
     Meteor.subscribe("fields");
-    if(Meteor.user()){
-        Meteor.subscribe("userData");
-    }
+    Meteor.subscribe("userData");
+
 
 
 
@@ -375,7 +374,8 @@ if (Meteor.isServer){
             return fields.find({field:{$in:fieldList}});
         }
         else{
-            return fields.find({});
+            var fieldList = ['hh_base', 'emp_base','hh_sim','emp_sim','hh_diff','emp_diff'];
+            return fields.find({field:{$in:fieldList}});
         }
 
 
@@ -406,9 +406,12 @@ if (Meteor.isServer){
 
     Meteor.publish("userData", function(){
         //var selectedFields = {emails: 1, roles:1, services:1};
+
         if(this.userId){
             return users.find({});
         }
+
+
 
     });
 
