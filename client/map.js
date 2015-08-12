@@ -7,6 +7,7 @@ if(Meteor.isClient){
         L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
         //initiate d3 variables
+        var drawZones = true;
         var centered;
         var mapById = d3.map();
         var svg = d3.select(map.getPanes().overlayPane).append("svg");
@@ -19,72 +20,96 @@ if(Meteor.isClient){
         var mapById = d3.map();
 
         //d3 "loop" that adds topojson to map
-        d3.json("data/zonesGeo.json", function(zones){
-            //console.log(zones);
-            var shape = topojson.feature(zones, zones.objects.zones);
-            var transform = d3.geo.transform({point: projectPoint});
-            var inverseTransform = d3.geo.transform({point: inverseProjectPoint});
-            var path = d3.geo.path().projection(transform);
-
-
-            feature = g.selectAll("path")
-                .data(shape.features)
-                .enter()
-                .append("path")
-                .attr("class", "q0-7 zones");
-            var title = feature.append("svg:title")
-                .attr("class", "pathTitle")
-                .text(function(d){return "ZoneID: " + d.properties.ZONE_ID;});
-
-
-
-            //var feature = g.selectAll("path")
-            //    .data(shape.features)
-            //    .enter()
-            //    .append("path")
-            //    .attr("class", "q0-7 zones");
-
-            map.on("viewreset", reset);
-            reset();
-
-            function reset(){
-                var bounds = path.bounds(shape),
-                topLeft = bounds[0],
-                bottomRight = bounds[1];
-
-                width = bottomRight[0] - topLeft[0];
-                height = bottomRight[1] - topLeft[1];
-
-                svg
-                    .attr("width", bottomRight[0] - topLeft[0])
-                    .attr("height", bottomRight[1] - topLeft[1])
-                    .style("left", topLeft[0] + "px")
-                    .style("top", topLeft[1] + "px");
-
-                g
-                    .attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
-
-                feature.attr("d", path);
-
-
-
+        function drawMap(zones){
+            var pathString;
+            var obj_name;
+            var label_string;
+            var geo_property;
+            var geo_class;
+            if(zones){
+                pathString = "data/zonesGeo.json";
+                obj_name="zones";
+                label_string = "ZoneId: ";
+                geo_property = "ZONE_ID";
+                geo_class = "zones";
 
             }
-
-            function projectPoint(x, y){
-                var point = map.latLngToLayerPoint(new L.LatLng(y,x));
-                this.stream.point(point.x, point.y);
+            else{
+                pathString = "data/county_web.json";
+                obj_name="county_2014_web";
+                label_string = "County: ";
+                geo_property = "COUNTY";
+                geo_class = "counties";
             }
-
-            function inverseProjectPoint(x, y){
-                var point = map.layerPointToLatLng([y,x]);
-                return point;
-            }
-
-
+            d3.json(pathString, function(zones){
+                //console.log(zones);
+                var shape = topojson.feature(zones, zones.objects[obj_name]);
+                var transform = d3.geo.transform({point: projectPoint});
+                var path = d3.geo.path().projection(transform);
 
 
-        });
+                feature = g.selectAll("path")
+                    .data(shape.features)
+                    .enter()
+                    .append("path")
+                    .attr("class", "q0-7 " + geo_class);
+                var title = feature.append("svg:title")
+                    .attr("class", "pathTitle")
+                    .text(function(d){return label_string + d.properties[geo_property];});
+
+
+
+                //var feature = g.selectAll("path")
+                //    .data(shape.features)
+                //    .enter()
+                //    .append("path")
+                //    .attr("class", "q0-7 zones");
+
+                map.on("viewreset", reset);
+                reset();
+
+                function reset(){
+                    var bounds = path.bounds(shape),
+                        topLeft = bounds[0],
+                        bottomRight = bounds[1];
+
+                    width = bottomRight[0] - topLeft[0];
+                    height = bottomRight[1] - topLeft[1];
+
+                    svg
+                        .attr("width", bottomRight[0] - topLeft[0])
+                        .attr("height", bottomRight[1] - topLeft[1])
+                        .style("left", topLeft[0] + "px")
+                        .style("top", topLeft[1] + "px");
+
+                    g
+                        .attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
+
+                    feature.attr("d", path);
+
+
+
+
+                }
+
+                function projectPoint(x, y){
+                    var point = map.latLngToLayerPoint(new L.LatLng(y,x));
+                    this.stream.point(point.x, point.y);
+                }
+
+                function inverseProjectPoint(x, y){
+                    var point = map.layerPointToLatLng([y,x]);
+                    return point;
+                }
+
+
+
+
+            });
+        }
+
+        drawMap(drawZones);
+
 
 
 
@@ -176,12 +201,28 @@ if(Meteor.isClient){
             }
         }
 
+        d3.select('#county-tab').on("click", function(){
+           d3.selectAll("path").remove();
+           drawZones = false;
+           drawMap(drawZones);
+        });
+
+        d3.select('#zone-tab').on("click", function() {
+            d3.selectAll("path").remove();
+            drawZones = true;
+            drawMap(drawZones);
+        });
+
+
+
         d3.select("#zoneFind").on("submit", function(){
             d3.event.preventDefault();
             console.log(this.zone.value);
             var dataPath = d3.selectAll("path");
             dataPath.each(findZone);
         });
+
+
 
         /* This function matches the user control input with the data in the topojson file.
            If the TAZ_ID or the ZONE_ID match the user control input, then the function will find the right

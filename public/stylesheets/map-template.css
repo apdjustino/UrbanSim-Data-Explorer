@@ -234,6 +234,11 @@ path.zones:hover{
     width:85%;
 }
 
+path.counties{
+    stroke:black;
+    stroke-width: 1;
+}
+
 .q0-7 {fill:#eff3ff; opacity:.5;}
 .q1-7 {fill:#c6dbef; opacity:.5;}
 .q2-7 {fill:#9ecae1; opacity:.5;}
