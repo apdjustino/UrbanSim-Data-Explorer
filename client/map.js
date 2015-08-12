@@ -113,38 +113,59 @@ if(Meteor.isClient){
 
 
 
-
+        //Listener function that responds to a change in the zones collection
+        //This function calls the setMap function which colors the map accordingly
         Tracker.autorun(function(){
             var data = zones.find({}).fetch();
-            if(data.length == 2804){
-                console.log(data);
-                setMap(data);
-            }
-            else{
-                try{
-                    //console.log(data);
-                    setMap(data);
+            try{
+                setMap(data, drawZones);
                 }
-                catch(err){
+            catch(err){
                     //console.log(data);
-                    console.log(err);
+                console.log(err);
                 }
+        });
+
+        //Listener function that responds to a change in the counties collection
+        //This function calls the setMap function which colors the map accordingly
+
+        Tracker.autorun(function(){
+            var data = counties.find({}).fetch();
+            try{
+                setMap(data, drawZones);
+            }
+            catch(err){
+                console.log(err);
 
             }
-            //setMap(data);
-
-
         });
 
 
 
-        function setMap(data){
-            field = $('#fieldSelect').val();
+
+
+        function setMap(data, pZones){
+            var field;
+            var id_prop;
+            var geo_prop;
+
+            if(pZones){
+                field = $('#fieldSelect').val();
+                id_prop = "zone_id";
+                geo_prop = "ZONE_ID";
+            }
+            else{
+                field = $('#fieldSelectCounty').val();
+                id_prop = "county_name";
+                geo_prop = "COUNTY";
+            }
+
+
 
             var valArr = [];
             data.forEach(function(cv, index, arr){
 
-                mapById.set(cv.zone_id, {
+                mapById.set(cv[id_prop], {
                     "val": cv[field]
                 });
                 valArr.push(cv[field]);
@@ -159,8 +180,8 @@ if(Meteor.isClient){
                 //    return quantize(mapById.get(d.properties.ZONE_ID).val) + " zones";
                 //});
                 feature.style("fill", function(d){
-                    if(mapById.get(d.properties.ZONE_ID)){
-                        return color(mapById.get(d.properties.ZONE_ID).val);
+                    if(mapById.get(d.properties[geo_prop])){
+                        return color(mapById.get(d.properties[geo_prop]).val);
                     }
 
                 });
@@ -169,15 +190,21 @@ if(Meteor.isClient){
                     d3.select("#resultTable")
                         .style("display", "block");
 
-                    d3.select('#fieldHeader').text($('#fieldSelect option:selected').text());
+                    if(pZones){
+                        d3.select('#fieldHeader').text($('#fieldSelect option:selected').text());
+                        d3.select('#idHeader').text('Zone ID');
+                        d3.select('#tazIDData').text(d.properties.TAZ_ID);
+                    }
+                    else{
+                        d3.select('#idHeader').text('County');
+                        d3.select('#fieldHeaderCounty').text($('#fieldSelectCounty option:selected').text());
+                        d3.select('#tazIDData').text("N/A");
+                    }
 
+                    d3.select('#zoneIdData').text(d.properties[geo_prop]);
 
-
-                    d3.select('#zoneIdData').text(d.properties.ZONE_ID);
-                    d3.select('#tazIDData').text(d.properties.TAZ_ID);
-
-                    if(mapById.get(d.properties.ZONE_ID)){
-                        d3.select('#dataPoint').text(mapById.get(d.properties.ZONE_ID).val);
+                    if(mapById.get(d.properties[geo_prop])){
+                        d3.select('#dataPoint').text(mapById.get(d.properties[geo_prop]).val);
                     }
                     else{
                         d3.select('#dataPoint').text("");
@@ -202,12 +229,15 @@ if(Meteor.isClient){
         }
 
         d3.select('#county-tab').on("click", function(){
+           Session.set('drawZones', false);
            d3.selectAll("path").remove();
+           d3.select("#resultTable").style("display", "none");
            drawZones = false;
            drawMap(drawZones);
         });
 
         d3.select('#zone-tab').on("click", function() {
+            Session.set('drawZones', true);
             d3.selectAll("path").remove();
             drawZones = true;
             drawMap(drawZones);

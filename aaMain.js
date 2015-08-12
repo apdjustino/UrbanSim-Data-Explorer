@@ -3,6 +3,7 @@ fields = new Mongo.Collection("fields");
 comments = new Mongo.Collection("comments");
 users = Meteor.users;
 zone_map = true;
+counties = new Mongo.Collection("counties");
 
 //routing code
 Router.configure({
@@ -56,6 +57,7 @@ if(Meteor.isClient) {
 
     Accounts.config({forbidClientAccountCreation:true});
     Session.set('addNewUser', true);
+    Session.set('drawZones', true);
     Meteor.subscribe("fields");
     Meteor.subscribe("userData");
 
@@ -114,6 +116,7 @@ if(Meteor.isClient) {
 
     //variable to check if there is an existing subscription
     var yearHandler = false;
+    var countyYearHandler = false;
     Template.results.events({
         'click #queryButton': function (event, template) {
             //var selectedYear = parseInt(template.find('#yearSelect').value);
@@ -133,16 +136,39 @@ if(Meteor.isClient) {
             $('#resultTable').css("display", "none");
             $('#downloadLink').css("display", "inline");
 
+        },
+        'click #queryButtonCounty': function(event, template){
+            event.preventDefault();
+            var selectedYear = parseInt($('#yearSelectCounty').val());
+            var selectedField = $('#fieldSelectCounty').val();
+            var newYearHandler = Meteor.subscribe("counties", selectedField, selectedYear);
+            if (countyYearHandler){
+                countyYearHandler.stop();
+            }
+            countyYearHandler = newYearHandler;
+            $('#resultTable').css("display", "none");
         }
 
     });
 
     Template.resultTable.events({
         'click #addComment': function(event, target){
-            var field = $('#fieldSelect option:selected').text();
+            var field;
+            var year;
             var zone = $('#zoneIdData').text();
             var text = $('#comment').val();
-            var year = $('#yearSelect option:selected').text();
+            if(Session.get('drawZones')){
+                field = $('#fieldSelect option:selected').text();
+
+                year = $('#yearSelect option:selected').text();
+            }
+            else{
+                field = $('#fieldSelectCounty option:selected').text();
+                var zone = $('#zoneIdData').text();
+                var text = $('#comment').val();
+                year = $('#yearSelectCounty option:selected').text();
+            }
+
 
             Meteor.call("addComment", zone, field, year, text);
             $('#comment').val('');
@@ -245,7 +271,7 @@ if(Meteor.isClient) {
             Meteor.call("getRoles", email, function(error,result){
                 Session.set('selectedUserRoles', result);
             });
-            $('#newRole').val("")
+            $('#newRole').val("");
         }
     });
 
@@ -401,6 +427,16 @@ if (Meteor.isServer){
         }
 
 
+
+    });
+
+    Meteor.publish("counties", function(selectedField, selectedYear){
+        var dict = {};
+        var newField = selectedField;
+        dict["county_name"] = 1;
+        dict[newField] = 1;
+
+        return counties.find({sim_year:selectedYear}, {fields:dict});
 
     });
 
