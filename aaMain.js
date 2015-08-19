@@ -323,11 +323,11 @@ if(Meteor.isClient) {
     Template.results.helpers({
         field: function(){return fields.find({});},
         year: function(){
-            var years = [];
-            for(var i=2011; i<2041; i++){
-                var year = {sim_year: i};
-                years.push(year);
-            }
+            var years = [{sim_year:2015}, {sim_year:2020}, {sim_year:2025}, {sim_year:2030}, {sim_year:2035}, {sim_year:2040}];
+            //for(var i=2011; i<2041; i++){
+            //    var year = {sim_year: i};
+            //    years.push(year);
+            //}
             return years;
         },
         link: function(){
