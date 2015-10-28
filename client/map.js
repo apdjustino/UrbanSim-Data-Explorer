@@ -260,7 +260,7 @@ if(Meteor.isClient){
          */
 
         function findZone(d){
-            if($('#zoneFind')[0].lastElementChild.value.length == 4){
+            if($('#zoneFind')[0].lastElementChild.value.length < 6){
                 if(d.properties.ZONE_ID == $('#zoneFind')[0].lastElementChild.value){
                     //console.log(d.properties);
                     map.setView(new L.LatLng(d.geometry.coordinates[0][0][1], d.geometry.coordinates[0][0][0]), 13, {animate:true});

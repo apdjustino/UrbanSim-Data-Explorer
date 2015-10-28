@@ -11,6 +11,7 @@ blaze-tools@1.0.3
 boilerplate-generator@1.0.3
 callback-hook@1.0.3
 check@1.0.5
+coffeescript@1.0.6
 ddp@1.1.0
 deps@1.0.7
 ejson@1.0.6
@@ -41,6 +42,8 @@ meteor@1.1.6
 meteor-platform@1.2.2
 minifiers@1.1.5
 minimongo@1.0.8
+mizzao:timesync@0.3.3
+mizzao:user-status@0.6.5
 mobile-status-bar@1.0.3
 mongo@1.1.0
 mrt:leaflet@0.3.8

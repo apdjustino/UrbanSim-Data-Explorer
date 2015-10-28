@@ -11,7 +11,7 @@ Router.configure({
 });
 Router.route('/', {
     name: 'home',
-    template: 'login'
+    template: 'accountLogin'
 });
 
 Router.map(function(){
@@ -97,6 +97,10 @@ if(Meteor.isClient) {
 
         }
     });
+
+    Template.accountLogin.rendered = function(){
+        Accounts._loginButtonsSession.set('dropdownVisible',true)
+    };
 
     Template.main.events({
         'click .logout': function(event){
